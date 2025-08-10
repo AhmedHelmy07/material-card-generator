@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/material-card-generator/static/css/main.ad4bbdcc.css",
+    "main.js": "/material-card-generator/static/js/main.c7a05580.js",
+    "static/js/453.d04cb421.chunk.js": "/material-card-generator/static/js/453.d04cb421.chunk.js",
+    "index.html": "/material-card-generator/index.html",
+    "main.ad4bbdcc.css.map": "/material-card-generator/static/css/main.ad4bbdcc.css.map",
+    "main.c7a05580.js.map": "/material-card-generator/static/js/main.c7a05580.js.map",
+    "453.d04cb421.chunk.js.map": "/material-card-generator/static/js/453.d04cb421.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ad4bbdcc.css",
+    "static/js/main.c7a05580.js"
+  ]
+}
