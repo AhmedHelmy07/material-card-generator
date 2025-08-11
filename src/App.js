@@ -27,46 +27,21 @@ function App() {
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: "array", cellDates: true });
 
-      if (workbook.SheetNames.length < 2) {
-        alert("File must contain 2 sheets");
-        return;
-      }
+      // Process the single sheet (Sheet1)
+      const sheet = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
 
-      // Process Sheet1 (Product Description, Quantity)
-      const sheet1 = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-      // Process Sheet2 (Product Name, Manufacturer, Origin, Date)
-      const sheet2 = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[1]]);
-
-      // Create a mapping of product names to manufacturer data for quick lookup
-      const manufacturerData = {};
-      sheet2.forEach(item => {
-        const productName = item["Product Name"] || item["product name"];
-        if (productName) {
-          manufacturerData[productName] = {
-            manufacturer: item["Manufacturer "] || item["manufacturer "],
-            origin: item["Origin"] || item["origin"] || "Made in China",
-            date: item["Date"] || item["date"]
-          };
-        }
-      });
-
-      // Merge data from both sheets
-      const mergedData = sheet1.map(item => {
-        const productName = item["Product Description"] || item["product description"] || 
-                           item["Product Name"] || item["product name"];
-        
-        const manufacturerInfo = manufacturerData[productName] || {};
-        
+      // Process data from the sheet
+      const processedData = sheet.map(item => {
         return {
-          productName: productName || "-",
-          manufacturer: manufacturerInfo.manufacturer || "-",
-          origin: manufacturerInfo.origin || "Made in China",
-          quantity: item["Quantity"] || item["quantity"] || "-",
-          date: formatDate(manufacturerInfo.date)
+          productName: item["Product Name"] || "-",
+          manufacturer: item["Manufacturer "] || "-",
+          origin: item["Origin"] || "Made in China",
+          quantity: item["Quantity"] || "-",
+          date: formatDate(item["Date"])
         };
       });
 
-      setRows(mergedData);
+      setRows(processedData);
     };
 
     reader.readAsArrayBuffer(file);
@@ -77,7 +52,7 @@ function App() {
     
     if (dateValue instanceof Date) return dateValue.toLocaleDateString();
     if (typeof dateValue === 'string') {
-      const datePart = dateValue.split(' ')[0];
+      const datePart = dateValue.split('T')[0]; // Handle ISO format
       const dateObj = new Date(datePart);
       return isNaN(dateObj.getTime()) ? new Date().toLocaleDateString() : dateObj.toLocaleDateString();
     }
@@ -134,7 +109,7 @@ function App() {
                         </tr>
                         <tr>
                           <td>Quantity</td>
-                          <td>{row.quantity} {row.quantity !== "-" && "pcs"}</td>
+                          <td>{row.quantity} {row.quantity !== "-" && (row.quantity.toString().includes('packs') ? '' : 'pcs')}</td>
                         </tr>
                         <tr>
                           <td>Date</td>
